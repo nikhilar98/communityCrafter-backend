@@ -111,4 +111,15 @@ usersCtlr.verifyEmail = async (req,res) => {
     }
 }
 
+usersCtlr.getProfile = async (req,res) => { 
+    const userId = req.user.id
+    try{
+            const user = await User.findById(userId)
+            res.json(_.pick(user,['username','email','password','phone','role']))
+        }
+    catch(err){ 
+            res.status(500).json({errors:[{msg:err.message}]})
+        }
+}
+
 module.exports = usersCtlr
