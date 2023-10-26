@@ -42,7 +42,7 @@ usersCtlr.register = async (req,res) => {
         user.isVerified = false
         const existingUsers = await User.countDocuments()
         if(existingUsers==0){
-            user.role='admin'
+            user.role='admin'         //first user is given admin role automatically
         }
         const savedUser = await user.save()
         const encryptedUserId = jwt.sign({userId:savedUser._id},process.env.SECRET_KEY)
@@ -115,11 +115,70 @@ usersCtlr.getProfile = async (req,res) => {
     const userId = req.user.id
     try{
             const user = await User.findById(userId)
-            res.json(_.pick(user,['username','email','password','phone','role']))
+            res.json(_.pick(user,['username','email','phone','password','role','isVerified']))
         }
     catch(err){ 
             res.status(500).json({errors:[{msg:err.message}]})
         }
+}
+
+usersCtlr.editProfile = async (req,res) => { 
+
+        const userId = req.user.id //users can edit their own profile details : email,pwd,phone,username
+        const body = _.pick(req.body,['username','email','password','phone'])
+        try{
+            const user = await User.findByIdAndUpdate(userId,
+            {
+                username:body.username,
+                email:body.email,
+                password:body.password,
+                phone:body.phone
+            },{new:true,runValidators:true})
+
+            res.json(user)
+        }
+        catch(err) { 
+            res.status(500).json({errors:[{msg:err.message}]})  
+        }
+}
+
+usersCtlr.getAllProfiles = async (req,res) => { 
+    try{
+        const users = await User.find() 
+        res.json(users) //only isverified and role fields will be enabled for editing.
+    }
+    catch(err) { 
+        res.status(500).json({errors:[{msg:err.message}]})  
+    }
+}
+
+usersCtlr.editUserPriviliges = async (req,res) => { 
+
+    //admin can edit anyone's role or isVerified
+        const userId = req.params.userId
+        const body = _.pick(req.body,['role','isVerified'])
+    
+        try{
+            const user = await User.findByIdAndUpdate(userId,{role:body.role,isVerified:body.isVerified},{new:true,runValidators:true})
+            res.json(user)
+        }
+        catch(err){
+            res.status(500).json({errors:[{msg:err.message}]})  
+        }
+
+    
+}
+
+usersCtlr.deleteProfile = async (req,res) => {
+    const userId = req.params.userId
+    
+    try{
+        const user = await User.findByIdAndDelete(userId)
+        res.json({msg:"User deleted Successfully."})
+    }
+    catch(err){
+        res.status(500).json({errors:[{msg:err.message}]})  
+    }
 }
 
 module.exports = usersCtlr

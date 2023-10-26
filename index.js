@@ -6,6 +6,7 @@ require('dotenv').config()
 const {checkSchema} = require('express-validator')
 const { userLoginSchema,userRegistrationSchema } = require('./app/helpers/usersSchema')
 const authenticateUser = require('./app/middlewares/authenticateUser')
+const authorizeUser = require('./app/middlewares/authorizeUser')
 
 const app =express() 
 
@@ -25,6 +26,14 @@ app.post('/comcraft/login',checkSchema(userLoginSchema),usersCtlr.login)
 app.get('/comcraft/verifyEmail/:userId',usersCtlr.verifyEmail)
 
 app.get('/comcraft/getProfile',authenticateUser,usersCtlr.getProfile)
+
+app.put('/comcraft/editProfile',authenticateUser,usersCtlr.editProfile)
+
+app.get('/comcraft/getAllProfiles',authenticateUser,authorizeUser(['admin']),usersCtlr.getAllProfiles)  //admin
+
+app.put('/comcraft/editUserPriviliges/:userId',authenticateUser,authorizeUser(['admin']),usersCtlr.editUserPriviliges)  //admin
+
+app.delete('/comcraft/deleteProfile/:userId',authenticateUser,authorizeUser(['admin']),usersCtlr.deleteProfile)  //admin
  
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`)
