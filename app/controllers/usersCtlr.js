@@ -45,7 +45,7 @@ usersCtlr.register = async (req,res) => {
             user.role='admin'         //first user is given admin role automatically
         }
         const savedUser = await user.save()
-        const encryptedUserId = jwt.sign({userId:savedUser._id},process.env.SECRET_KEY)
+        const encryptedUserId = jwt.sign({userId:savedUser._id},process.env.SECRET_KEY,{expiresIn:'1h'})
         transporter.sendMail({
             from:  process.env.G_EMAIL, // sender address
             to: `${user.email}`, // list of receivers
@@ -109,13 +109,14 @@ usersCtlr.verifyEmail = async (req,res) => {
     catch(err){
         res.status(500).json({errors:[{msg:err.message}]})
     }
+    
 }
 
 usersCtlr.getProfile = async (req,res) => { 
     const userId = req.user.id
     try{
             const user = await User.findById(userId)
-            res.json(_.pick(user,['username','email','phone','password','role','isVerified']))
+            res.json(_.pick(user,['username','email','phone','role']))
         }
     catch(err){ 
             res.status(500).json({errors:[{msg:err.message}]})
@@ -124,14 +125,19 @@ usersCtlr.getProfile = async (req,res) => {
 
 usersCtlr.editProfile = async (req,res) => { 
 
+        const errors = validationResult(req)
+
+        if(!errors.isEmpty()){
+            return res.status(400).json({errors:errors.array()})
+        }
+
         const userId = req.user.id //users can edit their own profile details : email,pwd,phone,username
-        const body = _.pick(req.body,['username','email','password','phone'])
+        const body = _.pick(req.body,['username','email','phone'])
         try{
             const user = await User.findByIdAndUpdate(userId,
             {
                 username:body.username,
                 email:body.email,
-                password:body.password,
                 phone:body.phone
             },{new:true,runValidators:true})
 
@@ -154,6 +160,11 @@ usersCtlr.getAllProfiles = async (req,res) => {
 
 usersCtlr.editUserPriviliges = async (req,res) => { 
 
+        const errors = validationResult(req)
+
+        if(!errors.isEmpty()){
+            return res.status(400).json({errors:errors.array()})
+        }
     //admin can edit anyone's role or isVerified
         const userId = req.params.userId
         const body = _.pick(req.body,['role','isVerified'])

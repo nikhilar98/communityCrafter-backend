@@ -39,6 +39,29 @@ const registrationEmailSchema = {
         }
     }
 } 
+const editEmailSchema = { 
+    notEmpty:{
+        errorMessage:"email cannot be empty."
+    },
+    isEmail:{
+        errorMessage:"Invalid email."
+    },
+    custom:{
+        options: async (value,{req}) => { 
+            const user = await User.findOne({email:value})
+            if(!user){
+                return true
+            }
+            if(user.id!=req.user.id){
+                throw new Error('This email is already taken.')
+            }
+            if(user.id==req.user.id){
+                return true
+            }
+            
+        }
+    }
+}
 const phoneSchema ={ 
     notEmpty:{
         errorMessage:"phone cannot be empty."
@@ -66,6 +89,37 @@ const phoneSchema ={
     }
 
 }
+const editPhoneSchema ={ 
+    notEmpty:{
+        errorMessage:"phone cannot be empty."
+    },
+    isLength:{
+        options:{
+            min:10,
+            max:10
+        },
+        errorMessage:"Phone number should consist of 10 numbers."
+    },
+    isNumeric:{
+        errorMessage:"Phone can contain only numbers."
+    },
+    custom:{
+        options: async (value,{req}) => { 
+            const user = await User.findOne({phone:value})
+            if(!user){
+                return true
+            }
+            if(user.id!=req.user.id){
+                throw new Error('This phone number is already taken.')
+            }
+            if(user.id==req.user.id){
+                return true
+            }
+            
+        }
+    }
+
+}
 const passwordSchema={ 
     notEmpty:{
         errorMessage:"password cannot be empty."
@@ -84,6 +138,7 @@ const roleSchema={
     }
 } 
 
+
 const userRegistrationSchema = { 
     username:usernameSchema,
     email:registrationEmailSchema,
@@ -96,4 +151,30 @@ const userLoginSchema = {
     password:passwordSchema
 }
 
-module.exports = {userLoginSchema,userRegistrationSchema}
+const userEditSchema = { 
+    username:usernameSchema,
+    email:editEmailSchema,
+    phone:editPhoneSchema,
+}
+
+const adminEditUserSchema = {
+    role: {
+        notEmpty:{
+            errorMessage:"Role is required."
+        },
+        isIn:{
+            options:[['communityHead','teacher','admin']],
+            errorMessage:"Not a valid role."
+        }
+    },
+    isVerified:{
+        notEmpty:{
+            errorMessage:"isVerified cannot be empty."
+        },
+        isBoolean:{ 
+            errorMessage:"Invalid entry."
+        }
+    }
+}
+
+module.exports = {userLoginSchema,userRegistrationSchema,userEditSchema,adminEditUserSchema}

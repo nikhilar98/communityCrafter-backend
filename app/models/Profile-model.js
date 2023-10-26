@@ -31,7 +31,7 @@ const profileSchema = new Schema ({
         type:Schema.Types.OjectId,
         ref:'User'
     },
-    classRequirements:[                                 //for teachers / cmhead - will have different meanings : for teacher Profile (classes attended by teacher) ,for cmhead profile (class reqs created by cmhead head)
+    classRequirements:[                                 //for teachers / cmhead - will have different meanings : for teacher Profile (classes being provided by teacher) ,for cmhead profile (class reqs created by cmhead head)
         {
             type:Schema.Types.ObjectId,
             ref:'ClassRequirement'

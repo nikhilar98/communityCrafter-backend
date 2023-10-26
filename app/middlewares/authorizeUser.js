@@ -4,7 +4,7 @@ const authorizeUser = (roles) => {
             next()
         }
         else{
-            res.status(400).json({errors:[{msg:"You are not authorized to view this section."}]})
+            res.status(403).json({errors:[{msg:"You are not authorized to view this section."}]})
         }
     }
 }
