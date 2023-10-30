@@ -4,7 +4,7 @@ const profileSchema = new Schema ({
     certifications: [                                   //for teachers
         {
             title:String,
-            photo:img
+            photo:String
         }
     ],
     description : String,                               //for teachers / cmhead
@@ -20,23 +20,18 @@ const profileSchema = new Schema ({
             },
             years:Number
         }
-    ],
-    reviews:[                                            //for teachers
-        {
-            type:Schema.Types.ObjectId,
-            ref:'TeacherReview'
-        }
-    ],
-    userId:{                                            //for everyone
-        type:Schema.Types.OjectId,
-        ref:'User'
-    },
-    classRequirements:[                                 //for teachers / cmhead - will have different meanings : for teacher Profile (classes being provided by teacher) ,for cmhead profile (class reqs created by cmhead head)
-        {
-            type:Schema.Types.ObjectId,
-            ref:'ClassRequirement'
-        }
     ]
+    ,
+    userId:{                                            //for everyone
+        type:Schema.Types.ObjectId,
+        ref:'User'
+    }
+    // classRequirements:[                                 //for teachers / cmhead - will have different meanings : for teacher Profile (classes being provided by teacher) ,for cmhead profile (class reqs created by cmhead head)
+    //     {
+    //         type:Schema.Types.ObjectId,
+    //         ref:'ClassRequirement'
+    //     }
+    // ]
 })
 
 const Profile = model('Profile',profileSchema)

@@ -112,7 +112,7 @@ usersCtlr.verifyEmail = async (req,res) => {
     
 }
 
-usersCtlr.getProfile = async (req,res) => { 
+usersCtlr.getAccount = async (req,res) => { 
     const userId = req.user.id
     try{
             const user = await User.findById(userId)
@@ -123,7 +123,7 @@ usersCtlr.getProfile = async (req,res) => {
         }
 }
 
-usersCtlr.editProfile = async (req,res) => { 
+usersCtlr.editAccount = async (req,res) => { 
 
         const errors = validationResult(req)
 
@@ -131,16 +131,10 @@ usersCtlr.editProfile = async (req,res) => {
             return res.status(400).json({errors:errors.array()})
         }
 
-        const userId = req.user.id //users can edit their own profile details : email,pwd,phone,username
+        const userId = req.user.id //users can edit their own Account details : email,pwd,phone,username
         const body = _.pick(req.body,['username','email','phone'])
         try{
-            const user = await User.findByIdAndUpdate(userId,
-            {
-                username:body.username,
-                email:body.email,
-                phone:body.phone
-            },{new:true,runValidators:true})
-
+            const user = await User.findByIdAndUpdate(userId,body,{new:true,runValidators:true})
             res.json(user)
         }
         catch(err) { 
@@ -148,7 +142,7 @@ usersCtlr.editProfile = async (req,res) => {
         }
 }
 
-usersCtlr.getAllProfiles = async (req,res) => { 
+usersCtlr.getAllAccounts = async (req,res) => { 
     try{
         const users = await User.find() 
         res.json(users) //only isverified and role fields will be enabled for editing.
@@ -180,7 +174,7 @@ usersCtlr.editUserPriviliges = async (req,res) => {
     
 }
 
-usersCtlr.deleteProfile = async (req,res) => {
+usersCtlr.deleteAccount = async (req,res) => {
     const userId = req.params.userId
     
     try{

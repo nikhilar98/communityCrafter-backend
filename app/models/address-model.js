@@ -5,7 +5,11 @@ const addressSchema = new Schema ({  //for teachers/ cmheads : for teachers it c
         address:String,
         city:String,
         state:String,
-        coordinates:[Number]    //eg: [12.599896, 78.595631]
+        coordinates:[Number],//eg: [12.599896, 78.595631]
+        profile:{             
+            type:Schema.Types.ObjectId,
+            ref:'Profile'
+        }    
 })
 
 const Address = model('Address',addressSchema)
