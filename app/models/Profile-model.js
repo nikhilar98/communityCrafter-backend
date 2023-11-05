@@ -1,27 +1,26 @@
 const {Schema,model} = require('mongoose')
  
 const profileSchema = new Schema ({
-    certifications: [                                   //for teachers
-        {
-            title:String,
-            photo:String
-        }
-    ],
-    description : String,                               //for teachers / cmhead
+    bio : String,                               //for teachers / cmhead (bio) 
     address: {                                          //for teachers / cmhead
         type:Schema.Types.ObjectId,
         ref:'Address'
-    } ,                                
+    } , 
     teachingCategories: [                                //for teachers
         {
             categoryId:{
                 type:Schema.Types.ObjectId,   
                 ref:'Category'
             },
-            years:Number
+            experience:Number,
+            certificates: [ 
+                {                                 //for teachers
+                    url:String,
+                    key:String
+                }
+            ],
         }
-    ]
-    ,
+    ],                               
     userId:{                                            //for everyone
         type:Schema.Types.ObjectId,
         ref:'User'

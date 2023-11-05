@@ -1,5 +1,5 @@
 const profileSchema = {  
-    description:{
+    bio:{
         notEmpty:{
             errorMessage:"Description cannot be emtpy."
         },
@@ -13,21 +13,51 @@ const profileSchema = {
             errorMessage:"Address is required"
         },
         isMongoId:{ 
-            errorMessage:"Invalid id."
-        },
+            errorMessage:"Invalid address."
+        }
     },
     teachingCategories:{
         isArray:{
-            option:{
+            options:{
                 min:1
             },
             errorMessage:"Atleast 1 category required"
         },
-        custom: async (value) => { 
-            const allObjects = value.every(ele=>{
-                return typeof ele == 'Object' && Object.keys(ele).includes(['categoryId','years'])
-            })
+        custom: {
+            options: async (value) => { 
+                const validateExp = value.every(ele=>{
+                    return ele.experience!="" && Number(ele.experience)>=0
+                })
+                if(validateExp){
+                    return true
+                }
+                else { 
+                    throw new Error('Invalid experience.')
+                }
+            }
+        },
+         
+        custom: {
+            options:async (value) => { 
+                const validateCertificates = value.every(category=>{
+                    return category.certificates.every(ele=>{
+                        return ele.url!='' && ele.key!=''
+                    })
+                })
 
+                if(validateCertificates){
+                    return true 
+                }
+                else{
+                    throw new Error('Invalid URL/KEY.')
+                }
+    
+            }
         }
     }
+       
+    
+
 }
+
+module.exports = profileSchema

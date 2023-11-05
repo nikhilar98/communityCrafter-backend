@@ -1,5 +1,6 @@
 const express = require('express') 
 const cors = require('cors')
+const multer = require('multer')
 const configDb = require('./config/db')
 const usersCtlr = require('./app/controllers/usersCtlr')
 const profileCtlr = require('./app/controllers/profileCtlr')
@@ -8,14 +9,19 @@ const {checkSchema} = require('express-validator')
 const {userLoginSchema,userRegistrationSchema,userEditSchema,adminEditUserSchema} = require('./app/helpers/usersSchema')
 const authenticateUser = require('./app/middlewares/authenticateUser')
 const authorizeUser = require('./app/middlewares/authorizeUser')
+const profileSchema = require('./app/helpers/profileSchema')
+const attachCertificateImages = require('./app/middlewares/attachCertificateImages')
 
 
 const app =express() 
+
+const upload = multer()  
 
 const port= process.env.PORT
 
 app.use(express.json())
 app.use(cors())
+
 
 configDb()
 
@@ -37,9 +43,10 @@ app.put('/comcraft/editUserPriviliges/:userId',authenticateUser,authorizeUser(['
 
 app.delete('/comcraft/deleteAccount/:userId',authenticateUser,authorizeUser(['admin']),usersCtlr.deleteAccount)  //admin can delete any user
 
- //profile 
+//profile 
 
-app.post('/comcraft/createProfile',authenticateUser,profileCtlr.create)
+app.post('/comcraft/createProfile',upload.any(),authenticateUser,authorizeUser(['teacher','communityHead']),attachCertificateImages,profileCtlr.create) 
+
 
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`)

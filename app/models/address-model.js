@@ -1,11 +1,15 @@
 const { Schema,model } = require("mongoose");
 
 const addressSchema = new Schema ({  //for teachers/ cmheads : for teachers it can be used to filter out the class requirements by communities within a radius of 5 km from his address upon login
-        name:String,
-        address:String,
+
+        building:String,
+        locality:String,
         city:String,
         state:String,
-        coordinates:[Number],//eg: [12.599896, 78.595631]
+        location:{
+            type:"Point",
+            coordinates: [-73.856077, 40.848447]
+        },   //geospatial data
         profile:{             
             type:Schema.Types.ObjectId,
             ref:'Profile'
