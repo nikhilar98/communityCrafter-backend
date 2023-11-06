@@ -15,12 +15,10 @@ profileCtlr.create = async (req,res) => {
 
     const userId = req.user.id
     if(req.user.role == 'teacher') { 
-
         const filesData = req.files 
         //<input type="file" name="uploaded_file"> the name property for the file input types will be `${ele._id}` where ele is each category object
         const body = _.pick(req.body,['bio','address','teachingCategories'])
-        body.teachingCategories = JSON.parse(body.teachingCategories) // only for postman testing
-        body.userId= userId
+        body.user= userId
         try{
             for (const file of filesData) {
                 const uploadResult = await uploadToS3(file, userId);
@@ -43,20 +41,23 @@ profileCtlr.create = async (req,res) => {
 
     else if(req.user.role=='communityHead') { 
 
-        // const body = _.pick(req.body,['address'])
-        // const profile = new Profile(body) 
-        // profile.userId= userId
-        // try{
-        //     const savedProfile = await profile.save() 
-        //     res.json(savedProfile)
-        // }
-        // catch(err){
-        //     res.status(500).json({errors:[{msg:err.message}]})
-        // }
-
-
+        const body = _.pick(req.body,['address'])
+        console.log("body",body)
+        const profile = new Profile() 
+        console.log("profile",profile)
+        profile.address = body.address
+        profile.user= userId
+        try{
+            const savedProfile = await profile.save() 
+            res.json(savedProfile)
+        }
+        catch(err){
+            res.status(500).json({errors:[{msg:err.message}]})
+        }
 
     }
 }
+
+
 
 module.exports = profileCtlr

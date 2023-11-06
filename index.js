@@ -9,8 +9,10 @@ const {checkSchema} = require('express-validator')
 const {userLoginSchema,userRegistrationSchema,userEditSchema,adminEditUserSchema} = require('./app/helpers/usersSchema')
 const authenticateUser = require('./app/middlewares/authenticateUser')
 const authorizeUser = require('./app/middlewares/authorizeUser')
-const profileSchema = require('./app/helpers/profileSchema')
 const attachCertificateImages = require('./app/middlewares/attachCertificateImages')
+const {teacherProfileSchema,cmHeadProfileSchema} = require('./app/helpers/profileSchema')
+const addressSchema = require('./app/helpers/addressSchema')
+const addressCtlr = require('./app/controllers/addressCtlr')
 
 
 const app =express() 
@@ -45,8 +47,11 @@ app.delete('/comcraft/deleteAccount/:userId',authenticateUser,authorizeUser(['ad
 
 //profile 
 
-app.post('/comcraft/createProfile',upload.any(),authenticateUser,authorizeUser(['teacher','communityHead']),attachCertificateImages,profileCtlr.create) 
+app.post('/comcraft/teacher/createProfile/',upload.any(),authenticateUser,authorizeUser(['teacher']),attachCertificateImages,checkSchema(teacherProfileSchema),profileCtlr.create) 
 
+app.post('/comcraft/communityHead/createProfile/',authenticateUser,authorizeUser(['communityHead']),checkSchema(cmHeadProfileSchema),profileCtlr.create) 
+
+app.post('/comcraft/address',authenticateUser,authorizeUser(['teacher','communityHead']),checkSchema(addressSchema),addressCtlr.createAddress)
 
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`)

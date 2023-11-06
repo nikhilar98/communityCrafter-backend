@@ -1,8 +1,9 @@
 const {Schema,model} = require('mongoose')
  
 const profileSchema = new Schema ({
-    bio : String,                               //for teachers / cmhead (bio) 
-    address: {                                          //for teachers / cmhead
+    bio : String,                               //for teachers 
+    address: {  
+        required:true,                                        //for teachers / cmhead
         type:Schema.Types.ObjectId,
         ref:'Address'
     } , 
@@ -14,14 +15,14 @@ const profileSchema = new Schema ({
             },
             experience:Number,
             certificates: [ 
-                {                                 //for teachers
+                {                                 
                     url:String,
                     key:String
                 }
             ],
         }
     ],                               
-    userId:{                                            //for everyone
+    user:{                                            //for everyone
         type:Schema.Types.ObjectId,
         ref:'User'
     }

@@ -1,21 +1,23 @@
-const profileSchema = {  
+const addressSchema = {
+    notEmpty:{
+        errorMessage:"Address is required"
+    },
+    isMongoId:{ 
+        errorMessage:"Invalid address."
+    }
+}
+
+const teacherProfileSchema = {  
     bio:{
         notEmpty:{
             errorMessage:"Description cannot be emtpy."
         },
         isLength:{
-            min:10,
-            errorMessage:"Atleast 10 characters required."
+            min:5,
+            errorMessage:"Atleast 5 characters required."
         }
     },
-    address:{
-        notEmpty:{
-            errorMessage:"Address is required"
-        },
-        isMongoId:{ 
-            errorMessage:"Invalid address."
-        }
-    },
+    address:addressSchema,
     teachingCategories:{
         isArray:{
             options:{
@@ -23,7 +25,20 @@ const profileSchema = {
             },
             errorMessage:"Atleast 1 category required"
         },
-        custom: {
+        custom: {   //category cannot be empty string
+            options: async (value) => { 
+                const validateCategory = value.every(ele=>{
+                    return ele.categoryId!=""
+                })
+                if(validateCategory){
+                    return true
+                }
+                else { 
+                    throw new Error('Category required.')
+                }
+            }
+        },
+        custom: { //experience should be greater than 0
             options: async (value) => { 
                 const validateExp = value.every(ele=>{
                     return ele.experience!="" && Number(ele.experience)>=0
@@ -37,27 +52,24 @@ const profileSchema = {
             }
         },
          
-        custom: {
-            options:async (value) => { 
-                const validateCertificates = value.every(category=>{
-                    return category.certificates.every(ele=>{
-                        return ele.url!='' && ele.key!=''
-                    })
-                })
+        custom: {  //checking for atleast 1 certificate per category
+            options:async (value,{req}) => { 
 
-                if(validateCertificates){
-                    return true 
+                for(let i of req.certificateFields){
+                    const fileFoundForCategory = req.files.find(ele=>ele.fieldname==i.name)
+                    if(!fileFoundForCategory){
+                        throw new Error("Atleast 1 certificate required per category.")
+                    }
                 }
-                else{
-                    throw new Error('Invalid URL/KEY.')
-                }
-    
+
+                return true
             }
         }
-    }
-       
-    
-
+    } 
 }
 
-module.exports = profileSchema
+const cmHeadProfileSchema = { 
+    address:addressSchema
+}
+
+module.exports = {teacherProfileSchema,cmHeadProfileSchema}
