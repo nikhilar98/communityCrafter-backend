@@ -13,6 +13,8 @@ const attachCertificateImages = require('./app/middlewares/attachCertificateImag
 const {teacherProfileSchema,cmHeadProfileSchema} = require('./app/helpers/profileSchema')
 const addressSchema = require('./app/helpers/addressSchema')
 const addressCtlr = require('./app/controllers/addressCtlr')
+const categoriesCtlr = require('./app/controllers/categoriesCtlr')
+const categorySchema = require('./app/helpers/categorySchema')
 
 
 const app =express() 
@@ -47,11 +49,28 @@ app.delete('/comcraft/deleteAccount/:userId',authenticateUser,authorizeUser(['ad
 
 //profile 
 
-app.post('/comcraft/teacher/createProfile/',upload.any(),authenticateUser,authorizeUser(['teacher']),attachCertificateImages,checkSchema(teacherProfileSchema),profileCtlr.create) 
+app.get('/comcraft/getProfile',authenticateUser,authorizeUser(['teacher','communityHead']),profileCtlr.getProfile)
 
-app.post('/comcraft/communityHead/createProfile/',authenticateUser,authorizeUser(['communityHead']),checkSchema(cmHeadProfileSchema),profileCtlr.create) 
+app.get('/comcraft/user/:userId',profileCtlr.showProfile) //public
 
-app.post('/comcraft/address',authenticateUser,authorizeUser(['teacher','communityHead']),checkSchema(addressSchema),addressCtlr.createAddress)
+app.post('/comcraft/teacher/createProfile',upload.any(),authenticateUser,authorizeUser(['teacher']),attachCertificateImages,checkSchema(teacherProfileSchema),profileCtlr.create) 
+
+app.post('/comcraft/communityHead/createProfile',authenticateUser,authorizeUser(['communityHead']),checkSchema(cmHeadProfileSchema),profileCtlr.create) 
+
+
+//address
+
+app.get('/comcraft/address',addressCtlr.getAddressList)
+
+app.post('/comcraft/address',authenticateUser,authorizeUser(['teacher','communityHead','admin']),checkSchema(addressSchema),addressCtlr.createAddress)
+
+
+//categories 
+
+app.get('/comcraft/categories',categoriesCtlr.getCategories) 
+
+
+app.post('/comcraft/categories',authenticateUser,authorizeUser(['admin']),checkSchema(categorySchema),categoriesCtlr.create)
 
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`)

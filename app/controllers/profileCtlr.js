@@ -5,6 +5,28 @@ const uploadToS3 = require('../../config/aws')
 
 const profileCtlr = {} 
 
+profileCtlr.getProfile = async (req,res) => { 
+    const userId = req.user.id
+    try{
+        const userProfile = await Profile.findOne({user:userId})
+        res.json(userProfile)
+    }
+    catch(err){
+        res.status(500).json({errors:[{msg:err.message}]})
+    }
+}
+profileCtlr.showProfile = async (req,res) => { 
+    const userId = req.params.userId
+    console.log(userId)
+    try{
+        const userProfile = await Profile.findOne({user:userId})
+        res.json(userProfile)
+    }
+    catch(err){
+        res.status(500).json({errors:[{msg:err.message}]})
+    }
+}
+
 profileCtlr.create = async (req,res) => {
     
     const errors = validationResult(req) 
