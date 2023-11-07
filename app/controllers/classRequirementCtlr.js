@@ -71,6 +71,7 @@ classRequirementCtlr.update = async (req,res) => {
         else if(req.user.role==='communityHead'){
             const body = _.pick(req.body,['userId'])
             await ClassRequirement.findOneAndUpdate({_id:classRequirementId},{confirmedTeacherId:body.userId,status:'fulfilled'})
+            //send an SMS to the teacher notifying about the confirmation
             res.json({msg:"The proposal has been accepted."}) 
         }
     }

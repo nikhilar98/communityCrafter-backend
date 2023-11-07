@@ -67,6 +67,8 @@ app.get('/comcraft/address',addressCtlr.getAddressList)
 app.post('/comcraft/address',authenticateUser,checkSchema(addressSchema),addressCtlr.createAddress)
 
 
+
+
 //categories 
 
 app.get('/comcraft/categories',categoriesCtlr.getCategories) 
