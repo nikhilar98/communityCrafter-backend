@@ -32,15 +32,17 @@ addressCtlr.createAddress = async (req,res) =>{
     
 }
 
-addressCtlr.getAddressList = async (req,res) => { 
+addressCtlr.getAddress = async (req,res) => { 
+    const userId = req.user.id
     try{
-        const allAddresses = await Address.find() 
-        res.json(allAddresses)
+        const addresses = await Address.find({user:userId}) 
+        res.json(addresses)
     }
     catch(err){
         res.status(500).json({errors:[{msg:err.message}]})  
     }
 }
+
 
 module.exports = addressCtlr
 

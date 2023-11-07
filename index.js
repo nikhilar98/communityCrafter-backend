@@ -62,10 +62,9 @@ app.post('/comcraft/communityHead/createProfile',authenticateUser,authorizeUser(
 
 //address
 
-app.get('/comcraft/address',addressCtlr.getAddressList)
+app.get('/comcraft/address',authenticateUser,authorizeUser(['teacher','communityHead']),addressCtlr.getAddress)
 
 app.post('/comcraft/address',authenticateUser,checkSchema(addressSchema),addressCtlr.createAddress)
-
 
 
 

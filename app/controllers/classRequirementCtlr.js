@@ -65,13 +65,13 @@ classRequirementCtlr.update = async (req,res) => {
 
         if(req.user.role==='teacher'){
             const requirements = await ClassRequirement.findOneAndUpdate({_id:classRequirementId},{ $push : {proposals:userId}})
-            //send an sms to the community head notifying him of the proposal.
+            //send an sms to the community head notifying him of the proposal. use Twilio
             res.json({msg:"Your proposal has been sent to the community."}) 
         }
         else if(req.user.role==='communityHead'){
             const body = _.pick(req.body,['userId'])
             await ClassRequirement.findOneAndUpdate({_id:classRequirementId},{confirmedTeacherId:body.userId,status:'fulfilled'})
-            //send an SMS to the teacher notifying about the confirmation
+            //send an SMS to the teacher notifying about the confirmation. use Twilio
             res.json({msg:"The proposal has been accepted."}) 
         }
     }
