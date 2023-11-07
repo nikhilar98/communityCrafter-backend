@@ -4,7 +4,9 @@ const addressSchema = {
             errorMessage:"Building cannot be empty."
         },
         isLength:{
-            min:2,
+            options:{
+                min:2,
+            },
             errorMessage:"Atleast 2 characters required."
         }
     },
@@ -13,7 +15,7 @@ const addressSchema = {
             errorMessage:"locality cannot be empty."
         },
         isLength:{
-            min:2,
+            options:{min:2},
             errorMessage:"Atleast 2 characters required."
         }
     },
@@ -22,7 +24,7 @@ const addressSchema = {
             errorMessage:"city cannot be empty."
         },
         isLength:{
-            min:2,
+            options:{min:2},
             errorMessage:"Atleast 2 characters required."
         }
     },
@@ -31,7 +33,7 @@ const addressSchema = {
             errorMessage:"state cannot be empty."
         },
         isLength:{
-            min:2,
+            options:{min:2},
             errorMessage:"Atleast 2 characters required."
         }
     },
@@ -40,7 +42,7 @@ const addressSchema = {
             errorMessage:"pincode cannot be empty."
         },
         isLength:{
-            min:2,
+            options:{min:2},
             errorMessage:"Atleast 2 characters required."
         }
     },
@@ -49,7 +51,7 @@ const addressSchema = {
             errorMessage:"country cannot be empty."
         },
         isLength:{
-            min:2,
+            options:{min:2},
             errorMessage:"Atleast 2 characters required."
         }
     }

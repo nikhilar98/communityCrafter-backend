@@ -15,6 +15,8 @@ const addressSchema = require('./app/helpers/addressSchema')
 const addressCtlr = require('./app/controllers/addressCtlr')
 const categoriesCtlr = require('./app/controllers/categoriesCtlr')
 const categorySchema = require('./app/helpers/categorySchema')
+const classRequirementSchema = require('./app/helpers/classRequirementSchema')
+const classRequirementCtlr = require('./app/controllers/classRequirementCtlr')
 
 
 const app =express() 
@@ -62,15 +64,26 @@ app.post('/comcraft/communityHead/createProfile',authenticateUser,authorizeUser(
 
 app.get('/comcraft/address',addressCtlr.getAddressList)
 
-app.post('/comcraft/address',authenticateUser,authorizeUser(['teacher','communityHead','admin']),checkSchema(addressSchema),addressCtlr.createAddress)
+app.post('/comcraft/address',authenticateUser,checkSchema(addressSchema),addressCtlr.createAddress)
 
 
 //categories 
 
 app.get('/comcraft/categories',categoriesCtlr.getCategories) 
 
-
 app.post('/comcraft/categories',authenticateUser,authorizeUser(['admin']),checkSchema(categorySchema),categoriesCtlr.create)
+
+//classRequirementSchema  
+
+app.post('/comcraft/classRequirement',authenticateUser,authorizeUser(['communityHead']),checkSchema(classRequirementSchema),classRequirementCtlr.create)
+
+app.get('/comcraft/classRequirements',authenticateUser,authorizeUser(['communityHead']),classRequirementCtlr.getOwnRequirements)  //for community heads to see their own created reqs
+
+app.get('/comcraft/classRequirements/pending',authenticateUser,authorizeUser(['teacher']),classRequirementCtlr.getPendingrequirements)
+
+app.put('/comcraft/classRequirement/:crId',authenticateUser,authorizeUser(['teacher','communityHead']),classRequirementCtlr.update)
+
+
 
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`)

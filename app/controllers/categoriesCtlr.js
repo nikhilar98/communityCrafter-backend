@@ -25,6 +25,7 @@ categoriesCtlr.create = async (req,res) => {
     try{
         const body = _.pick(req.body,['name'])
         const category = new Category(body)
+        
         const savedCategory = await category.save() 
         res.json(savedCategory)
     }

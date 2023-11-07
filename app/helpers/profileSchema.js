@@ -13,7 +13,7 @@ const teacherProfileSchema = {
             errorMessage:"Description cannot be emtpy."
         },
         isLength:{
-            min:5,
+            options:{min:5},
             errorMessage:"Atleast 5 characters required."
         }
     },
