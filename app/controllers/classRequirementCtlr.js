@@ -14,17 +14,12 @@ classRequirementCtlr.create = async (req,res) => {
         return res.status(400).json({errors:errors.array()})
     }
     const userId = req.user.id
-    const body = _.pick(req.body,['title','categoryId','batchSizeRange','payOffered','desiredTimeSlot','weekdays','commencementDate','duration','description'])
+    const body = _.pick(req.body,['address','title','categoryId','batchSizeRange','payOffered','desiredTimeSlot','weekdays','commencementDate','duration','description'])
     const requirement = new ClassRequirement(body) 
     requirement.status = 'pending'
     requirement.proposals = []
     requirement.creator = userId
     try{
-        const address = await Address.findOne({user:userId})
-        if(!address) { 
-            return res.status(400).json({errors:[{msg:"Please add your apartment address to your profile first."}]})
-        }
-        requirement.address = address._id
         const requirementSaved= await requirement.save()
         res.json(requirementSaved)
     }

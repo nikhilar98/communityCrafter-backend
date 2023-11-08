@@ -10,6 +10,14 @@ const classRequirementSchema =  {
             errorMessage:"Minimum 2 characters required."
         }
     },
+    address:{
+        notEmpty:{
+            errorMessage:"Address cannot be empty."
+        },
+        isMongoId:{
+            errorMessage:"Invalid address."
+        }
+    },
     categoryId:{
         notEmpty:{
             errorMessage:"Category cannot be empty."

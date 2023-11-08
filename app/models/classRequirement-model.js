@@ -38,7 +38,7 @@ const classRequirementSchema = new Schema ({
             type:Schema.Types.ObjectId,
             ref:'User'
         }
-})
+},{timestamps:true})
 
 const ClassRequirement = model('ClassRequirement',classRequirementSchema)
 
