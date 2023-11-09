@@ -1,8 +1,8 @@
 const { validationResult } = require("express-validator")
 const ClassRequirement = require("../models/classRequirement-model")
 const _ = require('lodash')
-const User = require("../models/users-model")
-const Address = require("../models/address-model")
+const Profile = require("../models/Profile-model")
+const {isPointWithinRadius} = require('geolib')
 
 const classRequirementCtlr = {} 
 
@@ -43,14 +43,27 @@ classRequirementCtlr.getOwnRequirements = async (req,res) => {
 
 
 classRequirementCtlr.getPendingrequirements = async (req,res) => { 
+    const userId = req.user.id 
+
+    const transformCoordinates=(coordinates)=>{
+        console.log(coordinates)
+        return { latitude:coordinates[1] ,longitude:coordinates[0] }
+    }
+
     try{
-        const requirements = await ClassRequirement.find({status:"pending"})
-        res.json(requirements)
+        const teacherProfile = await Profile.findOne({user:userId}).populate('address',['location'])
+        const teacherCoordinates = teacherProfile.address.location.coordinates
+        const requirements = await ClassRequirement.find({status:"pending"}).populate('address',['location'])
+        const filteredRequirements = requirements.filter(ele=>{
+            return isPointWithinRadius(transformCoordinates(ele.address.location.coordinates),transformCoordinates(teacherCoordinates),13000)
+
+        }) 
+        res.json({filteredRequirements})
     }
     catch(err){
         res.status(500).json({errors:[{msg:err.message}]})
     }
-}    //get all requirements that are in pending state
+}    //get all requirements that are in pending state and within a set km radius.
 
 
 classRequirementCtlr.update = async (req,res) => { 
