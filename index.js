@@ -17,6 +17,8 @@ const categoriesCtlr = require('./app/controllers/categoriesCtlr')
 const categorySchema = require('./app/helpers/categorySchema')
 const classRequirementSchema = require('./app/helpers/classRequirementSchema')
 const classRequirementCtlr = require('./app/controllers/classRequirementCtlr')
+const teacherReviewCtlr = require('./app/controllers/teacherReviewCtlr')
+const teacherReviewSchema = require('./app/helpers/teacherReviewSchema')
 
 
 const app =express() 
@@ -55,9 +57,9 @@ app.get('/comcraft/getProfile',authenticateUser,authorizeUser(['teacher','commun
 
 app.get('/comcraft/user/:userId',profileCtlr.showProfile) //public
 
-app.post('/comcraft/teacher/createProfile',upload.any(),authenticateUser,authorizeUser(['teacher']),attachCertificateImages,checkSchema(teacherProfileSchema),profileCtlr.create) 
+app.post('/comcraft/teacher/createProfile',upload.any(),authenticateUser,authorizeUser(['teacher']),attachCertificateImages,checkSchema(teacherProfileSchema),profileCtlr.create) //profile creation for teacher
 
-app.post('/comcraft/communityHead/createProfile',authenticateUser,authorizeUser(['communityHead']),checkSchema(cmHeadProfileSchema),profileCtlr.create) 
+app.post('/comcraft/communityHead/createProfile',authenticateUser,authorizeUser(['communityHead']),checkSchema(cmHeadProfileSchema),profileCtlr.create) //profile creation for cm head
 
 
 //address
@@ -65,7 +67,6 @@ app.post('/comcraft/communityHead/createProfile',authenticateUser,authorizeUser(
 app.get('/comcraft/address',authenticateUser,authorizeUser(['teacher','communityHead']),addressCtlr.getAddress)
 
 app.post('/comcraft/address',authenticateUser,checkSchema(addressSchema),addressCtlr.createAddress)
-
 
 
 //categories 
@@ -84,6 +85,17 @@ app.get('/comcraft/classRequirements/pending',authenticateUser,authorizeUser(['t
 
 app.put('/comcraft/classRequirement/:crId',authenticateUser,authorizeUser(['teacher','communityHead']),classRequirementCtlr.update)
 
+//teacher review routes
+app.post('/comcraft/teacherReview/:teacherId',authenticateUser,authorizeUser(['communityHead']),checkSchema(teacherReviewSchema),teacherReviewCtlr.create)
+
+app.get('/comcraft/teacherReview/:teacherId',authenticateUser,authorizeUser(['teacher','communityHead']),teacherReviewCtlr.getReviews) //get reviews on the teacher
+
+app.put('/comcraft/teacherReview/:reviewId',authenticateUser,authorizeUser(['communityHead']),checkSchema(teacherReviewSchema),teacherReviewCtlr.updateReview)
+
+app.delete('/comcraft/teacherReview/:reviewId',authenticateUser,authorizeUser(['communityHead']),teacherReviewCtlr.deleteReview)
+
+
+//implement the address based requirement listing feature for teachers
 
 
 app.listen(port,()=>{
