@@ -55,9 +55,10 @@ classRequirementCtlr.getPendingrequirements = async (req,res) => {
         const teacherCoordinates = teacherProfile.address.location.coordinates
         const requirements = await ClassRequirement.find({status:"pending"}).populate('address',['location'])
         const filteredRequirements = requirements.filter(ele=>{
-            return isPointWithinRadius(transformCoordinates(ele.address.location.coordinates),transformCoordinates(teacherCoordinates),13000)
-
-        }) 
+            return isPointWithinRadius(transformCoordinates(ele.address.location.coordinates),transformCoordinates(teacherCoordinates),14000)
+                        //isPointWithinRadius({latitude:42.24222,longitude:12.32452},{latitude:20.24222,longitude:11.32452},radius in m )
+                        //isPointWithinRadius(point,center point,distance from center point)
+        })          
         res.json({filteredRequirements})
     }
     catch(err){
