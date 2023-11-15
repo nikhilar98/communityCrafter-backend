@@ -73,14 +73,14 @@ usersCtlr.login = async(req,res) => {
     try{
         const user = await User.findOne({email:body.email})
         if(!user){
-            return res.status(400).json({errors:[{msg:"Invalid email / password ."}]})
+            return res.status(400).json({errors:[{path:"loginError",msg:"Invalid email / password ."}]})
         }
         if(!user.isVerified){
-            return res.status(404).json({errors:[{msg:"Email is not verified. Check your mail to verify."}]})
+            return res.status(404).json({errors:[{path:"loginError",msg:"Email is not verified. Check your mail to verify."}]})
         }
         const allowLogin = await bcrypt.compare(body.password,user.password)
         if(!allowLogin){
-            return res.status(400).json({errors:[{msg:"Invalid email / password ."}]})
+            return res.status(400).json({errors:[{path:"loginError",msg:"Invalid email / password ."}]})
         }
         const token = jwt.sign({id:user._id,role:user.role},process.env.SECRET_KEY)
         res.json({token:`bearer ${token}`})
@@ -104,7 +104,8 @@ usersCtlr.verifyEmail = async (req,res) => {
 
     try{
         await User.findByIdAndUpdate(userId,{isVerified:true})
-        res.send("You are verified.")//res.redirect(`http://localhost:${frontendPortNumber}/comcraft/login`)
+        // res.send("You are verified.")
+        res.redirect(`http://localhost:5173/login`)
     }
     catch(err){
         res.status(500).json({errors:[{msg:err.message}]})
