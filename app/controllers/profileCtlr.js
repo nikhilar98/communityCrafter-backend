@@ -8,7 +8,7 @@ const profileCtlr = {}
 profileCtlr.getProfile = async (req,res) => { 
     const userId = req.user.id
     try{
-        const userProfile = await Profile.findOne({user:userId})
+        const userProfile = await Profile.findOne({user:userId}).populate('address')
         res.json(userProfile)
     }
     catch(err){

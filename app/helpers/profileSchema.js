@@ -10,7 +10,7 @@ const addressSchema = {
 const teacherProfileSchema = {  
     bio:{
         notEmpty:{
-            errorMessage:"Description cannot be emtpy."
+            errorMessage:"Bio cannot be emtpy."
         },
         isLength:{
             options:{min:5},
