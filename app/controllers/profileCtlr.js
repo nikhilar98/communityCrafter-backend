@@ -2,6 +2,7 @@ const _ = require('lodash')
 const Profile = require('../models/Profile-model')
 const {validationResult} = require('express-validator')
 const uploadToS3 = require('../../config/aws')
+const Address = require('../models/address-model')
 
 const profileCtlr = {} 
 
@@ -19,7 +20,7 @@ profileCtlr.showProfile = async (req,res) => {
     const userId = req.params.userId
     console.log(userId)
     try{
-        const userProfile = await Profile.findOne({user:userId})
+        const userProfile = await Profile.findOne({user:userId}).populate('address')
         res.json(userProfile)
     }
     catch(err){
@@ -53,6 +54,8 @@ profileCtlr.create = async (req,res) => {
             console.log('checkpoint 4')
             const savedProfile = await profile.save() 
             console.log('checkpoint 5')
+            const addressObj = await Address.findById(savedProfile.address)
+            savedProfile.address=addressObj
             res.json(savedProfile)
         }
         catch(err){
