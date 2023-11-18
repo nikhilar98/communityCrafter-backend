@@ -67,13 +67,13 @@ profileCtlr.create = async (req,res) => {
     else if(req.user.role=='communityHead') { 
 
         const body = _.pick(req.body,['address'])
-        console.log("body",body)
         const profile = new Profile() 
-        console.log("profile",profile)
         profile.address = body.address
         profile.user= userId
         try{
-            const savedProfile = await profile.save() 
+            const savedProfile = await profile.save()
+            const addressObj = await Address.findById(savedProfile.address)
+            savedProfile.address=addressObj 
             res.json(savedProfile)
         }
         catch(err){
