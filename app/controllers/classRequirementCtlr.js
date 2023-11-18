@@ -51,15 +51,18 @@ classRequirementCtlr.getPendingrequirements = async (req,res) => {
     }
 
     try{
-        const teacherProfile = await Profile.findOne({user:userId}).populate('address',['location'])
+        const teacherProfile = await Profile.findOne({user:userId}).populate('address')
+        if(!teacherProfile){
+            return res.status(400).json({errors:[{msg:"Please create your profile first to view the community requirements."}]})
+        }
         const teacherCoordinates = teacherProfile.address.location.coordinates
-        const requirements = await ClassRequirement.find({status:"pending"}).populate('address',['location'])
+        const requirements = await ClassRequirement.find({status:"pending"}).populate('address')
         const filteredRequirements = requirements.filter(ele=>{
-            return isPointWithinRadius(transformCoordinates(ele.address.location.coordinates),transformCoordinates(teacherCoordinates),14000)
+            return isPointWithinRadius(transformCoordinates(ele.address.location.coordinates),transformCoordinates(teacherCoordinates),15000)
                         //isPointWithinRadius({latitude:42.24222,longitude:12.32452},{latitude:20.24222,longitude:11.32452},radius in m )
                         //isPointWithinRadius(point,center point,distance from center point)
         })          
-        res.json({filteredRequirements})
+        res.json(filteredRequirements)
     }
     catch(err){
         res.status(500).json({errors:[{msg:err.message}]})
