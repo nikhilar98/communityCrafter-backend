@@ -1,7 +1,7 @@
 const classRequirementSchema =  {
     title:{
         notEmpty:{
-            errorMessage:"Category cannot be empty."
+            errorMessage:"Title cannot be empty."
         },
         isLength:{
             options:{
@@ -47,12 +47,12 @@ const classRequirementSchema =  {
         }
     },  
     desiredTimeSlot:{
-        notEmpty:{
-            errorMessage:"desiredTimeSlot cannot be empty."
-        },
         custom:{
             options: async (value)=>{
                 const [startHour,endHour] = value.split('-').map(ele=>Number(ele.split(":")[0]))
+                if(startHour=='' || endHour==''){
+                    throw new Error("Start time and End time are required")
+                }
                 if(startHour>=endHour){
                     throw new Error("Start time has to be before end time.")
                 }
