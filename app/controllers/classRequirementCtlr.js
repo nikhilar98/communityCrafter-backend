@@ -32,7 +32,7 @@ classRequirementCtlr.create = async (req,res) => {
 classRequirementCtlr.getOwnRequirements = async (req,res) => { 
     const userId =req.user.id
     try{
-        const requirements = await ClassRequirement.find({creator:userId})
+        const requirements = await ClassRequirement.find({creator:userId}).populate('address').populate('creator')
         res.json(requirements)
     }
     catch(err){
