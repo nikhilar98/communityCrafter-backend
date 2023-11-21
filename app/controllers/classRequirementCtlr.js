@@ -32,7 +32,7 @@ classRequirementCtlr.create = async (req,res) => {
 classRequirementCtlr.getOwnRequirements = async (req,res) => { 
     const userId =req.user.id
     try{
-        const requirements = await ClassRequirement.find({creator:userId}).populate('address').populate('creator')
+        const requirements = await ClassRequirement.find({creator:userId}).populate('address').populate('creator').populate('proposals').populate('confirmedTeacherId')
         res.json(requirements)
     }
     catch(err){
@@ -76,15 +76,16 @@ classRequirementCtlr.update = async (req,res) => {
     try{
 
         if(req.user.role==='teacher'){
-            const requirements = await ClassRequirement.findOneAndUpdate({_id:classRequirementId},{ $push : {proposals:userId}})
+            const requirement = await ClassRequirement.findOneAndUpdate({_id:classRequirementId},{ $push : {proposals:userId}},{new:true}).populate('address').populate('creator')
             //send an sms to the community head notifying him of the proposal. use Twilio
-            res.json({msg:"Your proposal has been sent to the community."}) 
+            res.json({requirement,msg:"Your Proposal has been send to the community."})
+            
         }
         else if(req.user.role==='communityHead'){
             const body = _.pick(req.body,['userId'])
-            await ClassRequirement.findOneAndUpdate({_id:classRequirementId},{confirmedTeacherId:body.userId,status:'fulfilled'})
+            const requirement =  await ClassRequirement.findOneAndUpdate({_id:classRequirementId},{confirmedTeacherId:body.userId,status:'fulfilled'},{new:true}).populate('address').populate('creator').populate('confirmedTeacherId')
             //send an SMS to the teacher notifying about the confirmation. use Twilio
-            res.json({msg:"The proposal has been accepted."}) 
+            res.json({requirement,msg:"The proposal has been accepted."}) 
         }
     }
     catch(err) { 

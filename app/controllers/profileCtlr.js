@@ -4,6 +4,7 @@ const {validationResult} = require('express-validator')
 const uploadToS3 = require('../../config/aws')
 const Address = require('../models/address-model')
 
+
 const profileCtlr = {} 
 
 profileCtlr.getProfile = async (req,res) => { 
@@ -20,7 +21,8 @@ profileCtlr.showProfile = async (req,res) => {
     const userId = req.params.userId
     console.log(userId)
     try{
-        const userProfile = await Profile.findOne({user:userId}).populate('address')
+        const userProfile = await Profile.findOne({user:userId}).populate('address').populate('user',['username','email','phone'])
+       
         res.json(userProfile)
     }
     catch(err){

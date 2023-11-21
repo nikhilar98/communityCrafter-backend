@@ -117,7 +117,7 @@ usersCtlr.getAccount = async (req,res) => {
     const userId = req.user.id
     try{
             const user = await User.findById(userId)
-            res.json(_.pick(user,['username','email','phone','role']))
+            res.json(_.pick(user,['_id','username','email','phone','role']))
         }
     catch(err){ 
             res.status(500).json({errors:[{msg:err.message}]})
