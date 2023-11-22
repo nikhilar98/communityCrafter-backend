@@ -79,7 +79,7 @@ app.post('/comcraft/categories',authenticateUser,authorizeUser(['admin']),checkS
 
 app.post('/comcraft/classRequirement',authenticateUser,authorizeUser(['communityHead']),checkSchema(classRequirementSchema),classRequirementCtlr.create)
 
-app.get('/comcraft/classRequirements',authenticateUser,authorizeUser(['communityHead']),classRequirementCtlr.getOwnRequirements)  //for community heads to see their own created reqs
+app.get('/comcraft/classRequirements',authenticateUser,authorizeUser(['communityHead','teacher']),classRequirementCtlr.getOwnRequirements)  //for community heads to see their own created reqs
 
 app.get('/comcraft/classRequirements/pending',authenticateUser,authorizeUser(['teacher']),classRequirementCtlr.getPendingrequirements) //implement the address based requirement listing feature for teachers - show requirements within 5km radius
 

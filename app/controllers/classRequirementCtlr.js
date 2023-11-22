@@ -30,10 +30,19 @@ classRequirementCtlr.create = async (req,res) => {
 }
 
 classRequirementCtlr.getOwnRequirements = async (req,res) => { 
+    //do it for teacher to get his confirmed proposals
     const userId =req.user.id
+    const role = req.user.role 
+
     try{
-        const requirements = await ClassRequirement.find({creator:userId}).populate('address').populate('creator').populate('proposals').populate('confirmedTeacherId')
-        res.json(requirements)
+        if(role=='communityHead'){
+            const requirements = await ClassRequirement.find({creator:userId}).populate('address').populate('creator').populate('proposals').populate('confirmedTeacherId')
+            res.json(requirements)
+        }
+        else if (role=='teacher'){
+            const teacherConfirmedProposals = await ClassRequirement.find({confirmedTeacherId:userId}).populate('address').populate('creator')
+            res.json(teacherConfirmedProposals)
+        }
     }
     catch(err){
         res.status(500).json({errors:[{msg:err.message}]})
@@ -78,7 +87,7 @@ classRequirementCtlr.update = async (req,res) => {
         if(req.user.role==='teacher'){
             const requirement = await ClassRequirement.findOneAndUpdate({_id:classRequirementId},{ $push : {proposals:userId}},{new:true}).populate('address').populate('creator')
             //send an sms to the community head notifying him of the proposal. use Twilio
-            res.json({requirement,msg:"Your Proposal has been send to the community."})
+            res.json({requirement,msg:"Your Proposal has been sent to the community."})
             
         }
         else if(req.user.role==='communityHead'){

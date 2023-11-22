@@ -19,6 +19,9 @@ addressCtlr.createAddress = async (req,res) =>{
     const searchString = `${body.building}%2C%20${body.locality}%2C%20${body.city}%2C%20${body.state}%2C%20${body.pincode}%2C%20${body.country}`
     try{
         const  mapResponse =  await axios.get(`https://api.geoapify.com/v1/geocode/search?text=${searchString}&apiKey=${process.env.GEOAPIFYKEY}`)
+        if(mapResponse.data.features.length==0){
+           return  res.status(400).json({errors:[{msg:"Invalid address",path:'invalid address'}]})
+        }
         const location = [mapResponse.data.features[0].properties.lon,mapResponse.data.features[0].properties.lat]
         body.location = {type:'Point',coordinates:location}
         body.user = userId
