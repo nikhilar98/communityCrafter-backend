@@ -33,14 +33,23 @@ classRequirementCtlr.getOwnRequirements = async (req,res) => {
     //do it for teacher to get his confirmed proposals
     const userId =req.user.id
     const role = req.user.role 
+    const sortOrder = req.query.sortOrder
+    // console.log(sortOrder)
 
     try{
         if(role=='communityHead'){
-            const requirements = await ClassRequirement.find({creator:userId}).populate('address').populate('creator').populate('proposals').populate('confirmedTeacherId')
+            let requirements
+            if(sortOrder=='ascending'){
+                 requirements = await ClassRequirement.find({creator:userId}).populate('address').populate('creator').populate('proposals').populate('confirmedTeacherId').sort({createdAt:1})
+            }
+            else if(sortOrder == 'descending'){
+                 requirements = await ClassRequirement.find({creator:userId}).populate('address').populate('creator').populate('proposals').populate('confirmedTeacherId').sort({createdAt:-1})
+            }
+            
             res.json(requirements)
         }
         else if (role=='teacher'){
-            const teacherConfirmedProposals = await ClassRequirement.find({confirmedTeacherId:userId}).populate('address').populate('creator')
+            const teacherConfirmedProposals = await ClassRequirement.find({confirmedTeacherId:userId}).populate('address').populate('creator').sort({createdAt:1})
             res.json(teacherConfirmedProposals)
         }
     }
@@ -53,9 +62,12 @@ classRequirementCtlr.getOwnRequirements = async (req,res) => {
 
 classRequirementCtlr.getPendingrequirements = async (req,res) => { 
     const userId = req.user.id 
+    const sortOrder = req.query.sortOrder
+    console.log(sortOrder)
+    const searchDistance = req.query.searchDistance
+    console.log(searchDistance)
 
     const transformCoordinates=(coordinates)=>{
-        console.log(coordinates)
         return { latitude:coordinates[1] ,longitude:coordinates[0] }
     }
 
@@ -65,9 +77,15 @@ classRequirementCtlr.getPendingrequirements = async (req,res) => {
             return res.status(400).json({errors:[{msg:"Please create your profile first to view the community requirements."}]})
         }
         const teacherCoordinates = teacherProfile.address.location.coordinates
-        const requirements = await ClassRequirement.find({status:"pending"}).populate('address').populate('creator')
+        let requirements
+        if(sortOrder == 'ascending'){
+            requirements = await ClassRequirement.find({status:"pending"}).populate('address').populate('creator').sort({createdAt:1})
+        }
+        else if(sortOrder == 'descending'){
+            requirements = await ClassRequirement.find({status:"pending"}).populate('address').populate('creator').sort({createdAt:-1})
+        }
         const filteredRequirements = requirements.filter(ele=>{
-            return isPointWithinRadius(transformCoordinates(ele.address.location.coordinates),transformCoordinates(teacherCoordinates),15000)
+            return isPointWithinRadius(transformCoordinates(ele.address.location.coordinates),transformCoordinates(teacherCoordinates),searchDistance)
                         //isPointWithinRadius({latitude:42.24222,longitude:12.32452},{latitude:20.24222,longitude:11.32452},radius in m )
                         //isPointWithinRadius(point,center point,distance from center point)
         })          
