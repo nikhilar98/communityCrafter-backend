@@ -3,8 +3,27 @@ const ClassRequirement = require("../models/classRequirement-model")
 const _ = require('lodash')
 const Profile = require("../models/Profile-model")
 const {isPointWithinRadius} = require('geolib')
+require('dotenv').config()
+const nodemailer = require('nodemailer')
 
 const classRequirementCtlr = {} 
+
+const transporter =nodemailer.createTransport({  //Initialise nodemailer  
+    service: 'gmail',
+    auth: {
+        user: process.env.G_EMAIL,
+        pass: process.env.G_PASS
+    }
+});
+
+transporter.verify((err,success)=>{  //check for initialisation status
+    if(err){
+        console.log("Nodemailer initialisation error : ",err)
+    }
+    else{
+        console.log("Nodemailer : ",success,'ready for messages')
+    }
+})
 
 classRequirementCtlr.create = async (req,res) => { 
         
@@ -104,14 +123,27 @@ classRequirementCtlr.update = async (req,res) => {
 
         if(req.user.role==='teacher'){
             const requirement = await ClassRequirement.findOneAndUpdate({_id:classRequirementId},{ $push : {proposals:userId}},{new:true}).populate('address').populate('creator')
-            //send an sms to the community head notifying him of the proposal. use Twilio
+            //send email to the cm head regarding a new proposal 
+            transporter.sendMail({
+                from:  process.env.G_EMAIL, // sender address
+                to: `${requirement.creator.email}`, // list of receivers
+                subject: "New proposal", // Subject line
+                text: `Hello ${requirement.creator.username}! Your requirement '${requirement.title}' has a new proposal.`, // plain text body
+            });
             res.json({requirement,msg:"Your Proposal has been sent to the community."})
             
         }
         else if(req.user.role==='communityHead'){
             const body = _.pick(req.body,['userId'])
             const requirement =  await ClassRequirement.findOneAndUpdate({_id:classRequirementId},{confirmedTeacherId:body.userId,status:'fulfilled'},{new:true}).populate('address').populate('creator').populate('confirmedTeacherId')
-            //send an SMS to the teacher notifying about the confirmation. use Twilio
+            //send an email to the teacher notifying about the confirmation of proposal.
+            transporter.sendMail({
+                from:  process.env.G_EMAIL, // sender address
+                to: `${requirement.confirmedTeacherId.email}`, // list of receivers
+                subject: "Proposal accepted!", // Subject line
+                text: `Congratulations! Your proposal for '${requirement.title}' has been accepted. It will now be visible in the 'My Classes' section. Happy teaching! `, // plain text body
+            });
+            console.log(`mail sent to teacher ${requirement.confirmedTeacherId.email} for ${requirement.title}`)
             res.json({requirement,msg:"The proposal has been accepted."}) 
         }
     }
