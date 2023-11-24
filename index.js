@@ -19,6 +19,8 @@ const classRequirementSchema = require('./app/helpers/classRequirementSchema')
 const classRequirementCtlr = require('./app/controllers/classRequirementCtlr')
 const teacherReviewCtlr = require('./app/controllers/teacherReviewCtlr')
 const teacherReviewSchema = require('./app/helpers/teacherReviewSchema')
+const paymentCltr = require('./app/controllers/paymentCtlr')
+
 
 
 const app =express() 
@@ -95,7 +97,9 @@ app.put('/comcraft/teacherReview/:reviewId',authenticateUser,authorizeUser(['com
 app.delete('/comcraft/teacherReview/:reviewId',authenticateUser,authorizeUser(['communityHead']),teacherReviewCtlr.deleteReview)
 
 
+//payment routes 
 
+app.post('/comcraft/classRequirement/checkout',authenticateUser,authorizeUser(['communityHead']),paymentCltr.checkout)
 
 
 app.listen(port,()=>{

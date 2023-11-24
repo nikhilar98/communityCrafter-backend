@@ -5,10 +5,10 @@ const paymentSchema = new Schema ({
         type:Schema.Types.OjectId,
         ref:'User'
     },
-    amount:Number,                                                 
-    transactionId:String,                                       //returned by Stripe 
-    method:String,                                              //UPI/card/cash
-    status:String                                               //'success','failed' etc.. returned by Stripe
+    amount:Number,  
+    method:String,                                               
+    transactionId:String,                                       //returned by Stripe                                               //UPI/card/cash
+    paymentStatus:String                                               //'success','failed' etc.. returned by Stripe
     },{timestamps:true})
 
 const Payment = model('Payment',paymentSchema)
