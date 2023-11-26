@@ -54,7 +54,7 @@ usersCtlr.register = async (req,res) => {
             html:`<a href='http://localhost:3636/comcraft/verifyEmail/${encryptedUserId}'>Click here to verify your email.</a>`
         });
 
-        res.json({msg:"Congratulations, You are registered! Check you email sign in."})
+        res.json({msg:"Congratulations, You are registered! Check you email to sign in."})
     }
     catch(err){ 
         res.status(500).json({errors:[{msg:err.message}]})
