@@ -20,6 +20,7 @@ const classRequirementCtlr = require('./app/controllers/classRequirementCtlr')
 const teacherReviewCtlr = require('./app/controllers/teacherReviewCtlr')
 const teacherReviewSchema = require('./app/helpers/teacherReviewSchema')
 const paymentCltr = require('./app/controllers/paymentCtlr')
+const paymentSchema = require('./app/helpers/paymentSchema')
 
 
 
@@ -77,15 +78,6 @@ app.get('/comcraft/categories',categoriesCtlr.getCategories)
 
 app.post('/comcraft/categories',authenticateUser,authorizeUser(['admin']),checkSchema(categorySchema),categoriesCtlr.create)
 
-//classRequirementSchema  
-
-app.post('/comcraft/classRequirement',authenticateUser,authorizeUser(['communityHead']),checkSchema(classRequirementSchema),classRequirementCtlr.create)
-
-app.get('/comcraft/classRequirements',authenticateUser,authorizeUser(['communityHead','teacher']),classRequirementCtlr.getOwnRequirements)  //for community heads to see their own created reqs
-
-app.get('/comcraft/classRequirements/pending',authenticateUser,authorizeUser(['teacher']),classRequirementCtlr.getPendingrequirements) //implement the address based requirement listing feature for teachers - show requirements within 5km radius
-
-app.put('/comcraft/classRequirement/:crId',authenticateUser,authorizeUser(['teacher','communityHead']),classRequirementCtlr.update)
 
 //teacher review routes
 app.post('/comcraft/teacherReview/:teacherId',authenticateUser,authorizeUser(['communityHead']),checkSchema(teacherReviewSchema),teacherReviewCtlr.create)
@@ -99,7 +91,21 @@ app.delete('/comcraft/teacherReview/:reviewId',authenticateUser,authorizeUser(['
 
 //payment routes 
 
-app.post('/comcraft/classRequirement/checkout',authenticateUser,authorizeUser(['communityHead']),paymentCltr.checkout)
+app.post('/comcraft/checkout',authenticateUser,authorizeUser(['communityHead']),checkSchema(paymentSchema),paymentCltr.checkout)
+
+app.put('/comcraft/checkout/:transactionId',authenticateUser,authorizeUser(['communityHead']),paymentCltr.update)
+
+app.delete('/comcraft/checkout/:transactionId',authenticateUser,authorizeUser(['communityHead']),paymentCltr.delete)
+
+//classRequirementSchema  
+
+app.post('/comcraft/classRequirement',authenticateUser,authorizeUser(['communityHead']),checkSchema(classRequirementSchema),classRequirementCtlr.create)
+
+app.get('/comcraft/classRequirements',authenticateUser,authorizeUser(['communityHead','teacher']),classRequirementCtlr.getOwnRequirements)  //for community heads to see their own created reqs
+
+app.get('/comcraft/classRequirements/pending',authenticateUser,authorizeUser(['teacher']),classRequirementCtlr.getPendingrequirements) //implement the address based requirement listing feature for teachers - show requirements within 5km radius
+
+app.put('/comcraft/classRequirement/:crId',authenticateUser,authorizeUser(['teacher','communityHead']),classRequirementCtlr.update)
 
 
 app.listen(port,()=>{
