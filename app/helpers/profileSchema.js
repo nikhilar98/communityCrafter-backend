@@ -25,35 +25,28 @@ const teacherProfileSchema = {
             },
             errorMessage:"Atleast 1 category required"
         },
-        custom: {   //category cannot be empty string
-            options: async (value) => { 
-                const validateCategory = value.every(ele=>{
-                    return ele.categoryId!=""
-                })
-                if(validateCategory){
-                    return true
-                }
-                else { 
-                    throw new Error('Category required.')
-                }
-            }
-        },
-        custom: { //experience should be greater than 0
-            options: async (value) => { 
-                const validateExp = value.every(ele=>{
-                    return ele.experience!="" && Number(ele.experience)>=0
-                })
-                if(validateExp){
-                    return true
-                }
-                else { 
-                    throw new Error('Invalid experience.')
-                }
-            }
-        },
          
-        custom: {  //checking for atleast 1 certificate per category
+        custom: {  //checking for atleast 1 certificate per category and experience should be greater than 0
             options:async (value,{req}) => { 
+                console.log('caretificate validator',value)
+                console.log(req.certificateFields)
+
+                const expNotEmpty = value.every(ele=>{
+                    return ele.experience!="" 
+                })
+
+                const validateExp = value.every(ele=>{
+                    return Number(ele.experience)>=0
+                })
+
+                if(!expNotEmpty){
+                    throw new Error('Experience is required for each category.')
+                }
+                
+
+                if(!validateExp){ 
+                    throw new Error('Experience should be atleast 0')
+                }
 
                 for(let i of req.certificateFields){
                     const fileFoundForCategory = req.files.find(ele=>ele.fieldname==i.name)
