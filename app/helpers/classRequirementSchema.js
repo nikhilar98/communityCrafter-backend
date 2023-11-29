@@ -41,9 +41,9 @@ const classRequirementSchema =  {
         },
         isInt:{
             options:{ 
-                min:0
+                min:1
             },
-            errorMessage:"Invalid pay."
+            errorMessage:"Invalid Pay. Should be greater than 0."
         }
     },  
     desiredTimeSlot:{
