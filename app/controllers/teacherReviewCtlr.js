@@ -22,7 +22,8 @@ teacherReviewCtlr.create = async (req,res) => {
     review.teacherId = teacherId 
     try{
         const savedReview = await review.save() 
-        res.json(savedReview)
+        const newReview = await TeacherReview.findOne({_id:savedReview._id}).populate('creator')
+        res.json(newReview)
     }
     catch(err){
         res.status(500).json({errors:[{msg:err.message}]})  
@@ -32,7 +33,7 @@ teacherReviewCtlr.create = async (req,res) => {
 teacherReviewCtlr.getReviews = async (req,res) => { 
     const teacherId = req.params.teacherId 
     try{
-        const teacherReviews = await TeacherReview.find({teacherId:teacherId})
+        const teacherReviews = await TeacherReview.find({teacherId:teacherId}).populate('creator')
         res.json(teacherReviews)
     }
     catch(err){
@@ -48,7 +49,6 @@ teacherReviewCtlr.updateReview = async (req,res) => {
     if(!errors.isEmpty()){
         return res.status(400).json({errors:errors.array()})
     }
-
     const creatorId = req.user.id 
     const reviewId = req.params.reviewId
     const body = _.pick(req.body,['rating','reviewText'])

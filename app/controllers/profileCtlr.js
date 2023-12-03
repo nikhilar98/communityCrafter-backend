@@ -17,13 +17,23 @@ profileCtlr.getProfile = async (req,res) => {
         res.status(500).json({errors:[{msg:err.message}]})
     }
 }
-profileCtlr.showProfile = async (req,res) => { 
+profileCtlr.showProfile = async (req,res) => {  //for cm heads
     const userId = req.params.userId
     console.log(userId)
     try{
         const userProfile = await Profile.findOne({user:userId}).populate('address').populate('user',['username','email','phone'])
        
         res.json(userProfile)
+    }
+    catch(err){
+        res.status(500).json({errors:[{msg:err.message}]})
+    }
+}
+
+profileCtlr.getTutors = async(req,res) => { 
+    try{
+        const tutors = await Profile.find({role:'teacher'}).populate('user',['username','email','phone'])
+        res.json(tutors)
     }
     catch(err){
         res.status(500).json({errors:[{msg:err.message}]})
@@ -44,6 +54,7 @@ profileCtlr.create = async (req,res) => {
         //<input type="file" name="uploaded_file"> the name property for the file input types will be `${ele._id}` where ele is each category object
         const body = _.pick(req.body,['bio','address','teachingCategories'])
         body.user= userId
+        body.role=req.user.role
         try{
             for (const file of filesData) {
                 const uploadResult = await uploadToS3(file, userId);
@@ -72,6 +83,7 @@ profileCtlr.create = async (req,res) => {
         const profile = new Profile() 
         profile.address = body.address
         profile.user= userId
+        profile.role = req.user.role
         try{
             const savedProfile = await profile.save()
             const addressObj = await Address.findById(savedProfile.address)

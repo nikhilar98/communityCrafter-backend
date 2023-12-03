@@ -25,13 +25,12 @@ const profileSchema = new Schema ({
     user:{                                            //for everyone
         type:Schema.Types.ObjectId,
         ref:'User'
+    },
+    role:{
+        type:String,
+        required:true,
+        enum:['teacher','communityHead']
     }
-    // classRequirements:[                                 //for teachers / cmhead - will have different meanings : for teacher Profile (classes being provided by teacher) ,for cmhead profile (class reqs created by cmhead head)
-    //     {
-    //         type:Schema.Types.ObjectId,
-    //         ref:'ClassRequirement'
-    //     }
-    // ]
 })
 
 const Profile = model('Profile',profileSchema)

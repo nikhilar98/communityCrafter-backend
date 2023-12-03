@@ -60,6 +60,8 @@ app.get('/comcraft/getProfile',authenticateUser,authorizeUser(['teacher','commun
 
 app.get('/comcraft/user/:userId',profileCtlr.showProfile) //public
 
+app.get('/comcraft/tutors',authenticateUser,authorizeUser(['communityHead']),profileCtlr.getTutors)
+
 app.post('/comcraft/teacher/createProfile',upload.any(),authenticateUser,authorizeUser(['teacher']),attachCertificateImages,checkSchema(teacherProfileSchema),profileCtlr.create) //profile creation for teacher
 
 app.post('/comcraft/communityHead/createProfile',authenticateUser,authorizeUser(['communityHead']),checkSchema(cmHeadProfileSchema),profileCtlr.create) //profile creation for cm head
