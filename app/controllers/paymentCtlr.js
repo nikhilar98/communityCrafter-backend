@@ -35,8 +35,8 @@ paymentCltr.checkout = async (req,res) => {
                   }
             ],
             mode: 'payment',
-            success_url: `http://localhost:5173/create-checkout-session/requirement?success=true`,
-            cancel_url: `http://localhost:5173/create-checkout-session/requirement?canceled=true`,
+            success_url: `https://community-crafter-frontend.vercel.app/create-checkout-session/requirement?success=true`,
+            cancel_url: `https://community-crafter-frontend.vercel.app/create-checkout-session/requirement?canceled=true`,
           });
           
           const payment = new Payment()
