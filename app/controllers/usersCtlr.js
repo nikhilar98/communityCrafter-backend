@@ -105,7 +105,7 @@ usersCtlr.verifyEmail = async (req,res) => {
     try{
         await User.findByIdAndUpdate(userId,{isVerified:true})
         // res.send("You are verified.")
-        res.redirect(`http://localhost:5173/login`)
+        res.redirect(`https://community-crafter-frontend.vercel.app/login`)
     }
     catch(err){
         res.status(500).json({errors:[{msg:err.message}]})
