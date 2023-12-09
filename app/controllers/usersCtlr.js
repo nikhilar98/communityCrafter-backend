@@ -51,7 +51,7 @@ usersCtlr.register = async (req,res) => {
             to: `${user.email}`, // list of receivers
             subject: "Successfully registered.", // Subject line
             text: `Hello ${user.username}! Welcome to Community Crafter.`, // plain text body
-            html:`<a href='http://localhost:3636/comcraft/verifyEmail/${encryptedUserId}'>Click here to verify your email.</a>`
+            html:`<a href='https://communitycrafter.onrender.com/comcraft/verifyEmail/${encryptedUserId}'>Click here to verify your email.</a>`
         });
 
         res.json({msg:"Congratulations, You are registered! Check you email to sign in."})
