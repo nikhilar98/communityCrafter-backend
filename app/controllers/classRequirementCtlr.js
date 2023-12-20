@@ -53,7 +53,6 @@ classRequirementCtlr.getOwnRequirements = async (req,res) => {
     const userId =req.user.id
     const role = req.user.role 
     const sortOrder = req.query.sortOrder
-    // console.log(sortOrder)
 
     try{
         if(role=='communityHead'){
@@ -82,9 +81,7 @@ classRequirementCtlr.getOwnRequirements = async (req,res) => {
 classRequirementCtlr.getPendingrequirements = async (req,res) => { 
     const userId = req.user.id 
     const sortOrder = req.query.sortOrder
-    console.log(sortOrder)
     const searchDistance = req.query.searchDistance
-    console.log(searchDistance)
 
     const transformCoordinates=(coordinates)=>{
         return { latitude:coordinates[1] ,longitude:coordinates[0] }
@@ -143,7 +140,6 @@ classRequirementCtlr.update = async (req,res) => {
                 subject: "Proposal accepted!", // Subject line
                 text: `Congratulations! Your proposal for '${requirement.title}' has been accepted. It will now be visible in the 'My Classes' section. Happy teaching! `, // plain text body
             });
-            console.log(`mail sent to teacher ${requirement.confirmedTeacherId.email} for ${requirement.title}`)
             res.json({requirement,msg:"The proposal has been accepted."}) 
         }
     }

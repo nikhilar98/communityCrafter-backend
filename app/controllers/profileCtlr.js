@@ -19,7 +19,6 @@ profileCtlr.getProfile = async (req,res) => {
 }
 profileCtlr.showProfile = async (req,res) => {  //for cm heads
     const userId = req.params.userId
-    console.log(userId)
     try{
         const userProfile = await Profile.findOne({user:userId}).populate('address').populate('user',['username','email','phone'])
        
@@ -58,15 +57,12 @@ profileCtlr.create = async (req,res) => {
         try{
             for (const file of filesData) {
                 const uploadResult = await uploadToS3(file, userId);
-                console.log('checkpoint 2')
                 const obj = body.teachingCategories.find(ele=>ele.categoryId==file.fieldname)
                 obj.certificates.push(uploadResult)
             }
-            console.log('checkpoint 3')
+            
             const profile = new Profile(body) 
-            console.log('checkpoint 4')
             const savedProfile = await profile.save() 
-            console.log('checkpoint 5')
             const addressObj = await Address.findById(savedProfile.address)
             savedProfile.address=addressObj
             res.json(savedProfile)

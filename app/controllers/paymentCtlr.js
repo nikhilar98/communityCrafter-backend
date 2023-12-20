@@ -58,7 +58,6 @@ paymentCltr.checkout = async (req,res) => {
 paymentCltr.update = async(req,res) => { 
 
     const transactionId = req.params.transactionId
-    console.log('inside paymentcltr update',transactionId)
     try{
       const updatedPayment = await Payment.findOneAndUpdate({transactionId:transactionId},{paymentStatus:'success'})
       res.json(updatedPayment)

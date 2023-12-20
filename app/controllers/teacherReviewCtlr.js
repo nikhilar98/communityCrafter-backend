@@ -12,7 +12,6 @@ teacherReviewCtlr.create = async (req,res) => {
         return res.status(400).json({errors:errors.array()})
     }
     const teacherId = req.params.teacherId 
-    console.log(teacherId)
     const creatorId = req.user.id 
 
     const body = _.pick(req.body,['rating','reviewText'])

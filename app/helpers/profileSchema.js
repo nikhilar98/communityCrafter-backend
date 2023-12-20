@@ -28,8 +28,7 @@ const teacherProfileSchema = {
          
         custom: {  //checking for atleast 1 certificate per category and experience should be greater than 0
             options:async (value,{req}) => { 
-                console.log('caretificate validator',value)
-                console.log(req.certificateFields)
+               
 
                 const expNotEmpty = value.every(ele=>{
                     return ele.experience!="" 
